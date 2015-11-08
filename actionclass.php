@@ -8,10 +8,10 @@ class simpleResultClass
 class actionClass
 {
     static $execCompiler = [
-        "C" => "gcc %s -O2 -lm -o %s.out",
-        "C++" => "g++ -std=c++11 -O2 %s -o %s.out",
-        "Java" => "javac %s -o %s",
-        "python" => "python %s",
+        "C" => "gcc sandbox/%s -O2 -lm -o sandbox/%s.out",
+        "C++" => "g++ -std=c++11 -O2 sandbox/%s -o sandbox/%s.out",
+        "Java" => "javac sandbox/%s -o sandbox/%s",
+        "python" => "python sandbox/%s",
     ];
     public $codeFileName;
     public $inputFileName;
@@ -23,8 +23,11 @@ class actionClass
         if(needCompile($this->languageType))    //If this is a lang need to be compiled
         {
             //$cmdStr = $execCompiler[$this->languageType] . $codeFileName;
-            $cmdStr = sprintf($execCompiler, $this->codeFileName, "a");
-            echo "Debug : Command is " . $cmdStr;
+            echo "Lang type = " . $this->languageType;
+            var_dump(actionClass::$execCompiler);
+            echo "The exec Command is " . actionClass::$execCompiler[$this->languageType]. "\n";
+            $cmdStr = sprintf(actionClass::$execCompiler[$this->languageType], $this->codeFileName, "a");
+            echo "Debug : Command is " . $cmdStr . "\n";
             $this->execFileName = $codeFileName . "out";
             exec($cmdStr);
         }
@@ -35,7 +38,7 @@ class actionClass
         if(needCompile($this->languageType))    //If this is a lang need to be compiled
         {
             //$cmdStr = "./" . $this->execFileName . " < " . $inputFileName . " 1> " . $this->codeFileName . "out.txt"
-            $cmdStr = "./a.out" . " < " . $inputFileName . " 1> out.txt"  . " 2> err.txt ";
+            $cmdStr = "sandbox/a.out" . " < " . "sandbox/".$this->inputFileName . " 1> sandbox/out.txt"  . " 2> sandbox/err.txt ";
         }
         else
         {

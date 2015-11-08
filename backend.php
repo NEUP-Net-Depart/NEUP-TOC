@@ -1,5 +1,5 @@
 <?php
-error_reporting(E_ALL);
+error_reporting(E_ERROR);
 require_once('function.php');
 require_once('queue.php');
 require_once('actionclass.php');
@@ -27,6 +27,7 @@ while(TRUE)
         if(Auth($rawMsg) == true)
         {
             $actionObj = ParseMsg($rawMsg);
+            var_dump($actionObj);
             $actionObj->Compile();
             $simpleResultObj = $actionObj->Run();
 

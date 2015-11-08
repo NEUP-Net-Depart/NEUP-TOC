@@ -18,7 +18,7 @@ function Listen()
 function SocketOpen()
 {
     $ip = 'localhost';
-    $port = 2666;
+    $port = 2667;
     $mainSocket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 
     if (checkOK ($mainSocket, 'Socket Create') == -1) exit (-1);
@@ -41,6 +41,7 @@ function ParseMsg($rawMsg)
     $actionObj->languageType = $dataArr[1];
     $actionObj->timestamp = $dataArr[2];
     $actionObj->secureToken = $dataArr[3];
+    $actionObj->inputFileName = $actionObj->codeFileName.".in";
 
     return $actionObj;
 }

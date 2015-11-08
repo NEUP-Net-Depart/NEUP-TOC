@@ -16,8 +16,8 @@ class actionQueue
     }
     public function pop()
     {
-        return array_shift($this->_queueArr);
         if($this->len > 0) $this->len--;
+        return array_shift($this->_queueArr);
     }
     public function length()
     {
