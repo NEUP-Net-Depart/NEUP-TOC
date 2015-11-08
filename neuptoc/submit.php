@@ -45,7 +45,7 @@
 					<div class="col-md-8 col-md-offset-2">
 						<div class="cform" id="contact-form">
 							<div id="sendmessage">
-								 Your message has been sent. Thank you!
+								 Your code has been sent. Thank you!
 							</div>
 							<form action="submit.php" method="post" role="form" class="contactForm">
 							  <div class="form-group">
@@ -168,7 +168,7 @@
                 //echo "Compile Failed , errMsg is below\n";
                 $msgFromServer = socket_read($resSocket, 99999);
                 //echo "DEBUG: Recvd" . $msgFromServer . "\n";
-                echo $msgFromServer;
+                //echo $msgFromServer;
             }
             $_SESSION['output'] = $msgFromServer;
             socket_close($resSocket);
