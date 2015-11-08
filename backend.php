@@ -27,21 +27,31 @@ while(TRUE)
         if(Auth($rawMsg) == true)
         {
             $actionObj = ParseMsg($rawMsg);
-            var_dump($actionObj);
-            $actionObj->Compile();
-            $simpleResultObj = $actionObj->Run();
-
-            //Send Msg back to client
-            if($simpleResultObj->resultno == 0)
+            //var_dump($actionObj);
+            $simpleResultObj = $actionObj->Compile();
+            if($simpleResultObj->resultno != 0)
             {
-                socket_write($currentSocket, "OK\n");
-                socket_write($currentSocket, "OK\n");
-                socket_write($currentSocket, $simpleResultObj->resultStr, strlen($simpleResultObj->resultStr));
+                echo "Compile Error";
+                socket_write($currentSocket, "##ERR", 100);
+                socket_write($currentSocket, $simpleResultObj->resultStr, 99999);
             }
             else
             {
-                socket_write($currentSocket, "ERR");
-                socket_write($currentSocket, $simpleResultObj->resultStr, strlen($simpleResultObj->resultStr));
+                echo "Compile OK";
+                socket_write($currentSocket, "###OK", 100);
+                $simpleResultObj = $actionObj->Run();
+
+                //Send Msg back to client
+                if($simpleResultObj->resultno == 0)
+                {
+                    socket_write($currentSocket, "###OK");
+                    socket_write($currentSocket, $simpleResultObj->resultStr, strlen($simpleResultObj->resultStr));
+                }
+                else
+                {
+                    socket_write($currentSocket, "##ERR");
+                    socket_write($currentSocket, $simpleResultObj->resultStr, strlen($simpleResultObj->resultStr));
+                }
             }
         }
         else

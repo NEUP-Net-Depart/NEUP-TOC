@@ -1,5 +1,5 @@
 <?php
-
+error_reporting(E_ALL);
 class simpleResultClass
 {
     public $resultno;
@@ -8,11 +8,11 @@ class simpleResultClass
 class actionClass
 {
     static $execCompiler = [
-        "C" => "gcc sandbox/%s -O2 -lm -o sandbox/%s.out",
-        "C++11" => "g++ -std=c++11 -O2 sandbox/%s -o sandbox/%s.out",
-        "C++" => "g++ -O2 sandbox/%s -o sandbox/%s.out",
-        "Java" => "javac sandbox/%s -o sandbox/%s",
-        "python" => "python sandbox/%s",
+        "C" => "gcc sandbox/%s -O2 -lm -o sandbox/%s.out 2>sandbox/cerr.txt",
+        "C++11" => "g++ -std=c++11 -O2 sandbox/%s -o sandbox/%s.out 2>sandbox/cerr.txt",
+        "C++" => "g++ -O2 sandbox/%s -o sandbox/%s.out 2>sandbox/cerr.txt",
+        "Java" => "javac sandbox/%s -o sandbox/%s 2>sandbox/cerr.txt",
+        "python" => "python sandbox/%s 2>sandbox/cerr.txt",
     ];
     public $codeFileName;
     public $inputFileName;
@@ -29,9 +29,23 @@ class actionClass
             echo "The exec Command is " . actionClass::$execCompiler[$this->languageType]. "\n";
             $cmdStr = sprintf(actionClass::$execCompiler[$this->languageType], $this->codeFileName, "a");
             echo "Debug : Command is " . $cmdStr . "\n";
-            $this->execFileName = $codeFileName . "out";
+            $this->execFileName = $this->codeFileName . "out";
             exec($cmdStr);
+            $runResObj = new simpleResultClass();
+            if(($errFileSize = filesize("sandbox/cerr.txt")) == 0)
+            {
+                $runResObj->resultno = 0;
+                $runResObj->resultStr = $resStr;
+            }
+            else
+            {
+                $runResObj->resultno = -1;
+                $fff = fopen("sandbox/cerr.txt", "r");
+                $resStr = fread($fff, $errFileSize);
+                $runResObj->resultStr = $resStr;
+            }
         }
+        return $runResObj;
     }
 
     public function Run()
@@ -53,7 +67,7 @@ class actionClass
         echo "Server result:".$resStr;
         //Read the output file and return the result
         $runResObj = new simpleResultClass();
-        if(($errFileSize = filesize("err.txt")) == 0)
+        if(($errFileSize = filesize("sandbox/err.txt")) == 0)
         {
             $runResObj->resultno = 0;
             $runResObj->resultStr = $resStr;
@@ -61,7 +75,7 @@ class actionClass
         else
         {
             $runResObj->resultno = -1;
-            $fff = fopen("err.txt", "r");
+            $fff = fopen("sandbox/err.txt", "r");
             $resStr = fread($fff, $errFileSize);
             $runResObj->resultStr = $resStr;
         }
