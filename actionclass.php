@@ -9,7 +9,8 @@ class actionClass
 {
     static $execCompiler = [
         "C" => "gcc sandbox/%s -O2 -lm -o sandbox/%s.out",
-        "C++" => "g++ -std=c++11 -O2 sandbox/%s -o sandbox/%s.out",
+        "C++11" => "g++ -std=c++11 -O2 sandbox/%s -o sandbox/%s.out",
+        "C++" => "g++ -O2 sandbox/%s -o sandbox/%s.out",
         "Java" => "javac sandbox/%s -o sandbox/%s",
         "python" => "python sandbox/%s",
     ];
@@ -38,13 +39,18 @@ class actionClass
         if(needCompile($this->languageType))    //If this is a lang need to be compiled
         {
             //$cmdStr = "./" . $this->execFileName . " < " . $inputFileName . " 1> " . $this->codeFileName . "out.txt"
-            $cmdStr = "sandbox/a.out" . " < " . "sandbox/".$this->inputFileName . " 1> sandbox/out.txt"  . " 2> sandbox/err.txt ";
+            $cmdStr = "sandbox/a.out" . " < " . "sandbox/".$this->inputFileName ./* " 1> sandbox/out.txt"  .*/ " 2> sandbox/err.txt ";
         }
         else
         {
-            $cmdStr = $execCompiler[$this->languageType] . " " . $this->codeFileName . " < " . $this->inputFileName . " 1> out.txt 2> err.txt";
+            $cmdStr = $execCompiler[$this->languageType] . " " . $this->codeFileName . " < " . $this->inputFileName . "  2> err.txt";
         }
-        $resStr = exec($cmdStr);
+        echo "Running .. command is " . $cmdStr . "\n";
+        /*$resStr = */
+        exec($cmdStr,$resStr);
+        var_dump($resStr);
+        $resStr = join("\n",$resStr);
+        echo "Server result:".$resStr;
         //Read the output file and return the result
         $runResObj = new simpleResultClass();
         if(($errFileSize = filesize("err.txt")) == 0)

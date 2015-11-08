@@ -34,7 +34,8 @@ while(TRUE)
             //Send Msg back to client
             if($simpleResultObj->resultno == 0)
             {
-                socket_write($currentSocket, "OK");
+                socket_write($currentSocket, "OK\n");
+                socket_write($currentSocket, "OK\n");
                 socket_write($currentSocket, $simpleResultObj->resultStr, strlen($simpleResultObj->resultStr));
             }
             else
