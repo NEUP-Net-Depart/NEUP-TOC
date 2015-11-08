@@ -3,3 +3,4 @@ sandbox/
 .idea/
 *.sh
 *._*
+*.old
