@@ -126,7 +126,7 @@
             $_SESSION['ce'] = true;
             $_SESSION['retResult'] = true;
             $ip = 'localhost';
-            $port = 2669;
+            $port = 2333;
 
             $resSocket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 

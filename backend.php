@@ -1,14 +1,14 @@
 <?php
-error_reporting(E_ERROR);
+error_reporting(E_ALL);
 require_once('function.php');
 require_once('queue.php');
 require_once('actionclass.php');
 
-$actionList = new actionQueue();
 $socketQueue = new actionQueue();
-//$actionList->initQueue();
 $socketQueue->initQueue();
 $mainSocket = SocketOpen();
+//socket_set_nonblock($mainSocket);
+socket_set_option($mainSocket, SOL_SOCKET, SO_REUSEADDR, 1);
 
 while(TRUE)
 {
@@ -16,9 +16,11 @@ while(TRUE)
         continue;               //Do not accept create new socket
     //if($resSocket = socket_accept($mainSocket) && $resSocket != FALSE)
 	$resSocket = socket_accept($mainSocket);
+    //echo "Listening\n";
 	if($resSocket != FALSE)
     {
         $socketQueue->push($resSocket);
+        //socket_set_nonblock($resSocket);
     }
     if($socketQueue->isempty() == FALSE)
     {
