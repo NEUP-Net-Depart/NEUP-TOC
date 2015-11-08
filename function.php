@@ -18,7 +18,7 @@ function Listen()
 function SocketOpen()
 {
     $ip = 'localhost';
-    $port = 2669;
+    $port = 2333;
     $mainSocket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 
     if (checkOK ($mainSocket, 'Socket Create') == -1) exit (-1);
