@@ -2,7 +2,7 @@
     error_reporting(E_ALL);
     //$ip = '192.168.43.19';
     $ip = 'localhost';
-    $port = 2669;
+    $port = 2333;
 
     $resSocket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 

@@ -26,16 +26,21 @@ class actionClass
             //$cmdStr = $execCompiler[$this->languageType] . $codeFileName;
             echo "Lang type = " . $this->languageType;
             var_dump(actionClass::$execCompiler);
-            echo "The exec Command is " . actionClass::$execCompiler[$this->languageType]. "\n";
+            //echo "The exec Command is " . actionClass::$execCompiler[$this->languageType]. "\n";
             $cmdStr = sprintf(actionClass::$execCompiler[$this->languageType], $this->codeFileName, "a");
             echo "Debug : Command is " . $cmdStr . "\n";
             $this->execFileName = $this->codeFileName . "out";
-            exec($cmdStr);
+            $result = exec($cmdStr);
+            var_dump($result);
             $runResObj = new simpleResultClass();
-            if(($errFileSize = filesize("sandbox/cerr.txt")) == 0)
+            clearstatcache();
+            $errFileSize = filesize("sandbox/cerr.txt");
+            echo "Debug : errFileSize = $errFileSize\n";
+            //if(($errFileSize = filesize("sandbox/cerr.txt")) == 0)
+            if($errFileSize == 0)
             {
                 $runResObj->resultno = 0;
-                $runResObj->resultStr = $resStr;
+                //$runResObj->resultStr = $resStr;
             }
             else
             {
@@ -67,6 +72,7 @@ class actionClass
         echo "Server result:".$resStr;
         //Read the output file and return the result
         $runResObj = new simpleResultClass();
+        clearstatcache();
         if(($errFileSize = filesize("sandbox/err.txt")) == 0)
         {
             $runResObj->resultno = 0;
