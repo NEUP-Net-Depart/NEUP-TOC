@@ -1,0 +1,10 @@
+<?php
+session_start();
+if(isset($_SESSION['name']))
+{
+    header("Location:submit.php");
+}
+else
+{
+    header("Location:login.php");
+}
