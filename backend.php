@@ -26,6 +26,7 @@ while(TRUE)
     {
         $currentSocket = $socketQueue->pop();
         $rawMsg = SockRead($currentSocket);
+        echo "Raw Msg is $rawMsg\n";
         if(Auth($rawMsg) == true)
         {
             $actionObj = ParseMsg($rawMsg);

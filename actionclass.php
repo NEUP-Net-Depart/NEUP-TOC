@@ -11,9 +11,14 @@ class actionClass
         "C" => "gcc sandbox/%s -O2 -lm -o sandbox/%s.out 2>sandbox/cerr.txt",
         "C++11" => "g++ -std=c++11 -O2 sandbox/%s -o sandbox/%s.out 2>sandbox/cerr.txt",
         "C++" => "g++ -O2 sandbox/%s -o sandbox/%s.out 2>sandbox/cerr.txt",
-        "Java" => "javac sandbox/%s -o sandbox/%s 2>sandbox/cerr.txt",
-        "python" => "python sandbox/%s 2>sandbox/cerr.txt",
+        "Java" => "javac sandbox/%s -o sandbox/%s 2>sandbox/err.txt",
+        "Python2" => "python2.7 sandbox/%s 2>sandbox/err.txt",
+        "Python3" => "python sandbox/%s 2>sandbox/err.txt",
+        "PHP" => "php sandbox/%s 2>sandbox/err.txt",
+        "Ruby" => "ruby sandbox/%s 2>sandbox/err.txt",
     ];
+    static $clearCommand = "rm -rf sandbox/%s sandbox/%s.in sandbox/*.txt sandbox/*.out";
+    static $timeoutLimit = "timeout 5 ";
     public $codeFileName;
     public $inputFileName;
     public $secureToken;
@@ -21,6 +26,7 @@ class actionClass
     public $execFileName;
     public function Compile()
     {
+        $compileResObj = new simpleResultClass();
         if(needCompile($this->languageType))    //If this is a lang need to be compiled
         {
             //$cmdStr = $execCompiler[$this->languageType] . $codeFileName;
@@ -32,25 +38,32 @@ class actionClass
             $this->execFileName = $this->codeFileName . "out";
             $result = exec($cmdStr);
             var_dump($result);
-            $runResObj = new simpleResultClass();
             clearstatcache();
             $errFileSize = filesize("sandbox/cerr.txt");
             echo "Debug : errFileSize = $errFileSize\n";
             //if(($errFileSize = filesize("sandbox/cerr.txt")) == 0)
             if($errFileSize == 0)
             {
-                $runResObj->resultno = 0;
+                $compileResObj->resultno = 0;
                 //$runResObj->resultStr = $resStr;
             }
             else
             {
-                $runResObj->resultno = -1;
+                $compileResObj->resultno = -1;
                 $fff = fopen("sandbox/cerr.txt", "r");
                 $resStr = fread($fff, $errFileSize);
-                $runResObj->resultStr = $resStr;
+                $compileResObj->resultStr = $resStr;
+                $clrStr = sprintf(actionClass::$clearCommand, $this->codeFileName, $this->codeFileName); //If Compile error, remove the file now
+                echo "Cleanning... Command is $clrStr\n";
+                exec($clrStr);
             }
         }
-        return $runResObj;
+        else
+        {
+
+            $compileResObj->resultno = 0;
+        }
+        return $compileResObj;
     }
 
     public function Run()
@@ -62,14 +75,15 @@ class actionClass
         }
         else
         {
-            $cmdStr = $execCompiler[$this->languageType] . " " . $this->codeFileName . " < " . $this->inputFileName . "  2> err.txt";
+            $cmdStr = sprintf(actionClass::$execCompiler[$this->languageType], $this->codeFileName);
         }
+        $clrStr = sprintf(actionClass::$clearCommand, $this->codeFileName, $this->codeFileName);
         echo "Running .. command is " . $cmdStr . "\n";
         /*$resStr = */
         exec($cmdStr,$resStr);
         var_dump($resStr);
         $resStr = join("\n",$resStr);
-        echo "Server result:".$resStr;
+        echo "Server result:".$resStr . "\n";
         //Read the output file and return the result
         $runResObj = new simpleResultClass();
         clearstatcache();
@@ -85,6 +99,8 @@ class actionClass
             $resStr = fread($fff, $errFileSize);
             $runResObj->resultStr = $resStr;
         }
+        echo "Cleanning... Command is $clrStr\n";
+        exec($clrStr);
         return $runResObj;
 
     }

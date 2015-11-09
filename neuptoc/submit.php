@@ -5,7 +5,8 @@
         "C++" => ".cpp",
         "Java" => ".java",
         "PHP" => ".php",
-        "Python" => ".py",
+        "Python2" => ".py",
+        "Python3" => ".py",
         "Ruby" => ".rb",
     ];
 ?>
@@ -95,9 +96,10 @@
 								<option value="C++">C++</option>
 								<!--<option value="C#">C#</option>-->
 								<!--<option value="Java">Java</option>-->
-								<!--<option value="PHP">PHP</option>-->
-								<!--<option value="Python">Python</option>-->
-								<!--<option value="Ruby">Ruby</option>-->
+								<option value="PHP">PHP</option>
+								<option value="Python2">Python2.7</option>
+                                <option value="Python3">Python3</option>
+								<option value="Ruby">Ruby</option>
 								<!--<option value="OC">Objective-C</option>-->
 								<!--<option value="VB">VisualBasic</option>-->
 								</select>
@@ -137,8 +139,8 @@
             fwrite($userfile, $usertext);
             fclose($userfile);
         }
-            var_dump($_SESSION);
-            var_dump($_POST);
+            //var_dump($_SESSION);
+            //var_dump($_POST);
         if($_SERVER['REQUEST_METHOD'] == "POST" && !isset($_SESSION['output']))     //if server hasn't send result back to client
         {
             $_SESSION['output'] = "";
@@ -181,6 +183,10 @@
                     $msgFromServer  = SockRead($resSocket);
                     //echo "DEBUG: Recvd" . $msgFromServer . "\n";
                     //echo $msgFromServer . "\n";
+                }
+                else
+                {
+                    $msgFromServer  = SockRead($resSocket);
                 }
                 //echo "DEBUG: Recvd" . $msgFromServer . "\n";
             }

@@ -54,7 +54,7 @@ function checkOK ($varr, $errType)
         return -1;
     }
     else {
-        echo $errType . " Success\n";
+        //echo $errType . " Success\n";
         return 0;
     }
 }
@@ -72,7 +72,13 @@ function Auth($rawMsg)
 
 function needCompile($varr)
 {
-    return true;
+    $COMPILE_LANG = array("C","C++","Java");
+    foreach ($COMPILE_LANG as $lang)
+    {
+        if($varr == $lang)
+            return true;
+    }
+    return false;
 }
 
 function SockRead($sock, $length = 0)
@@ -80,7 +86,7 @@ function SockRead($sock, $length = 0)
     $len = 0;
     $msg = "";
     $tmpstr = "";
-    echo 'Resource Socket No.' . $sock ."\n";
+    //echo 'Resource Socket No.' . $sock ."\n";
     while (true)
     {
         $tmpstr = socket_read($sock,1);
@@ -89,7 +95,6 @@ function SockRead($sock, $length = 0)
         $len++;
         if(($offset = strpos($msg,"##VOID##SOCK_OVER##")) != FALSE || $offset === 0)              //Recv this means conversation complete
         {
-            echo "offset = $offset\n";
             $msg = substr($msg,0, $offset);
             break;
         }
