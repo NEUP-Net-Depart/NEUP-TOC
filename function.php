@@ -67,10 +67,39 @@ function Auth($rawMsg)
     $timestamp = $dataArr[2];
     $md5sum = md5($timestamp.$salt);
     if($md5sum != $sectok) return false;
-	return true;
+    return true;
 }
 
 function needCompile($varr)
 {
-	return true;
+    return true;
+}
+
+function SockRead($sock, $length = 0)
+{
+    $len = 0;
+    $msg = "";
+    $tmpstr = "";
+    echo 'Resource Socket No.' . $sock ."\n";
+    while (true)
+    {
+        $tmpstr = socket_read($sock,1);
+        $msg = $msg . $tmpstr;
+        $offset = 0;
+        $len++;
+        if(($offset = strpos($msg,"##VOID##SOCK_OVER##")) != FALSE || $offset === 0)              //Recv this means conversation complete
+        {
+            echo "offset = $offset\n";
+            $msg = substr($msg,0, $offset);
+            break;
+        }
+    }
+    return $msg;
+}
+
+
+function SockWrite($sock, $msg)
+{
+    socket_write($sock, $msg);
+    socket_write($sock, "##VOID##SOCK_OVER##");
 }

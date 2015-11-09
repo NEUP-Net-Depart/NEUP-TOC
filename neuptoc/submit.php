@@ -1,3 +1,14 @@
+<?php require_once('function.php') ?>
+<?php
+    $SUFFIX = [
+        "C" => ".c",
+        "C++" => ".cpp",
+        "Java" => ".java",
+        "PHP" => ".php",
+        "Python" => ".py",
+        "Ruby" => ".rb",
+    ];
+?>
 <?php error_reporting(E_ALL); ?>
 <?php session_start(); ?>
 <?php 
@@ -109,21 +120,23 @@
 			$choose=$_POST['ITlanguage'];
 		}
 	?>
-								<?php
+<?php
         $userfilename = "";
-		if(isset($_POST['input'])){
-			$usertextinput=$_POST['input'];
-			$userfileinput=fopen("sandbox/".md5($_POST['text']).".cpp".".in","w") or die("Unable to open file!");
-			fwrite($userfileinput, $usertextinput);
-			fclose($userfileinput);
-			}
-		if(isset($_POST['text'])){
-			$usertext=$_POST['text'];
-			$userfilename=md5($_POST['text']).".cpp";
-			$userfile=fopen("sandbox/".$userfilename,"w") or die("Unable to open file!");
-			fwrite($userfile, $usertext);
-			fclose($userfile);
-			}
+		if(isset($_POST['input']))
+        {
+            $usertextinput=$_POST['input'];
+            $userfileinput=fopen("sandbox/".md5($_POST['text']).$SUFFIX[$choose].".in","w") or die("Unable to open file!");
+            fwrite($userfileinput, $usertextinput);
+            fclose($userfileinput);
+        }
+		if(isset($_POST['text']))
+        {
+            $usertext=$_POST['text'];
+            $userfilename=md5($_POST['text']).$SUFFIX[$choose];
+            $userfile=fopen("sandbox/".$userfilename,"w") or die("Unable to open file!");
+            fwrite($userfile, $usertext);
+            fclose($userfile);
+        }
             var_dump($_SESSION);
             var_dump($_POST);
         if($_SERVER['REQUEST_METHOD'] == "POST" && !isset($_SESSION['output']))     //if server hasn't send result back to client
@@ -143,39 +156,39 @@
             if(checkOK($resClientConn, 'Sock Conn') == -1) exit(-1);
             //echo "Starting Client\n";
 
-            //$msgFromServer = socket_read($resSocket, 2345);
+            //$msgFromServer = SockRead($resSocket, 2345);
             $timestamp = time();
             $sectok = md5($timestamp.$salt);
             $msgToServer = "$userfilename#$choose#$timestamp#$sectok";
             //echo "Sending compiling request to server ...\n";
-            socket_write($resSocket, $msgToServer, strlen($msgToServer) + 1);
-            $msgFromServer = socket_read($resSocket,5);         //Listening for signal
+            SockWrite($resSocket,$msgToServer);
+            $msgFromServer = SockRead($resSocket);         //Listening for signal
             //echo "DEBUG: Recvd##" . $msgFromServer . "\n";
             if($msgFromServer == "FATAL")
             {
                 die("Server is down now 233\n");
             }
-            else if($msgFromServer == "###OK")
+            else if($msgFromServer == "OK")
             {
                 //echo "Compiling ok ... Program running\n";
                 $_SESSION['ce'] = false;
-                $msgFromServer = socket_read($resSocket,5);     //Listening for signal
+                $msgFromServer = SockRead($resSocket,5);     //Listening for signal
                 //echo "DEBUG: Recvd" . $msgFromServer . "\n";
-                if($msgFromServer == "###OK")
+                if($msgFromServer == "OK")
                 {
                     $_SESSION['re'] = false;
                     //echo "Running ok ... Generate output\n";
-                    $msgFromServer  = socket_read($resSocket, 99999);
+                    $msgFromServer  = SockRead($resSocket);
                     //echo "DEBUG: Recvd" . $msgFromServer . "\n";
                     //echo $msgFromServer . "\n";
                 }
                 //echo "DEBUG: Recvd" . $msgFromServer . "\n";
             }
-            else if($msgFromServer == "##ERR")
+            else if($msgFromServer == "ERR")
             {
                 //echo "DEBUG: Recvd" . $msgFromServer . "\n";
                 //echo "Compile Failed , errMsg is below\n";
-                $msgFromServer = socket_read($resSocket, 99999);
+                $msgFromServer = SockRead($resSocket);
                 //echo "DEBUG: Recvd" . $msgFromServer . "\n";
                 //echo $msgFromServer;
             }
@@ -234,17 +247,4 @@
     <!--<script src="js/main.js"></script>-->
     </body>
 </html>
-<?php
-function checkOK ($varr, $errType)
-{
-    if ($varr == FALSE)
-    {
-        echo $errType . " Failed\n";
-        return -1;
-    }
-    else {
-        //echo $errType . " Success\n";  /* Success makes no output */
-        return 0;
-    }
-}
-?>
+

@@ -25,7 +25,7 @@ while(TRUE)
     if($socketQueue->isempty() == FALSE)
     {
         $currentSocket = $socketQueue->pop();
-        $rawMsg = socket_read($currentSocket, 1000);
+        $rawMsg = SockRead($currentSocket);
         if(Auth($rawMsg) == true)
         {
             $actionObj = ParseMsg($rawMsg);
@@ -33,26 +33,26 @@ while(TRUE)
             $simpleResultObj = $actionObj->Compile();
             if($simpleResultObj->resultno != 0)
             {
-                echo "Compile Error";
-                socket_write($currentSocket, "##ERR", 100);
-                socket_write($currentSocket, $simpleResultObj->resultStr, 99999);
+                echo "Compile Error\n";
+                SockWrite($currentSocket, "ERR");
+                SockWrite($currentSocket, $simpleResultObj->resultStr);
             }
             else
             {
-                echo "Compile OK";
-                socket_write($currentSocket, "###OK", 100);
+                echo "Compile OK\n";
+                SockWrite($currentSocket, "OK");
                 $simpleResultObj = $actionObj->Run();
 
                 //Send Msg back to client
                 if($simpleResultObj->resultno == 0)
                 {
-                    socket_write($currentSocket, "###OK");
-                    socket_write($currentSocket, $simpleResultObj->resultStr, strlen($simpleResultObj->resultStr));
+                    SockWrite($currentSocket, "OK");
+                    SockWrite($currentSocket, $simpleResultObj->resultStr);
                 }
                 else
                 {
-                    socket_write($currentSocket, "##ERR");
-                    socket_write($currentSocket, $simpleResultObj->resultStr, strlen($simpleResultObj->resultStr));
+                    SockWrite($currentSocket, "ERR");
+                    SockWrite($currentSocket, $simpleResultObj->resultStr);
                 }
             }
         }
@@ -62,7 +62,7 @@ while(TRUE)
             $getport = "";
             socket_getsockname($currentSocket, $getaddr, $getport);
             echo "Invalid request from $getaddr:$getport";
-            socket_write($currentSocket, "FATAL");
+            SockWrite($currentSocket, "FATAL");
         }
     }
 }
