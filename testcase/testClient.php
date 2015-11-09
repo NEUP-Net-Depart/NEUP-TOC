@@ -13,7 +13,7 @@
     echo "Starting Client\n";
 
         //$msgFromServer = socket_read($resSocket, 2345);
-        $msgToServer = "1043.cpp#C++#20151111#whatthefuckismd5sum";
+        $msgToServer = "1043.cpp#C++#20151111#c3bfd02f33fcc8df5177c7e4af9c4f08";
         echo "Sending compiling request to server ...\n";
         socket_write($resSocket, $msgToServer, strlen($msgToServer) + 1);
         $msgFromServer = socket_read($resSocket,5);         //Listening for signal
