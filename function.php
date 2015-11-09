@@ -61,6 +61,12 @@ function checkOK ($varr, $errType)
 
 function Auth($rawMsg)
 {
+    $dataArr = explode("#",$rawMsg);
+    $salt = "VOID001mengmengda!!!";
+    $sectok = $dataArr[3];
+    $timestamp = $dataArr[2];
+    $md5sum = md5($timestamp.$salt);
+    if($md5sum != $sectok) return false;
 	return true;
 }
 

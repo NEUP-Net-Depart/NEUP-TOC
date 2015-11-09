@@ -58,6 +58,10 @@ while(TRUE)
         }
         else
         {
+            $getaddr = "";
+            $getport = "";
+            socket_getsockname($currentSocket, $getaddr, $getport);
+            echo "Invalid request from $getaddr:$getport";
             socket_write($currentSocket, "FATAL");
         }
     }
