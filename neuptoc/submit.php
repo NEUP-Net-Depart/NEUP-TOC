@@ -1,10 +1,18 @@
 <?php error_reporting(E_ALL); ?>
 <?php session_start(); ?>
+<?php 
+    if(isset($_GET['logout']))
+    {
+        unset($_SESSION);
+        session_destroy();
+    }
+?>
+<?php $salt = "VOID001mengmengda!!!"; ?>
 <?php
     //Validate the user
     if(!isset($_SESSION['name']))
     {
-        header("Location:login.php");
+        header("Location:/neuptoc/login.php");
     }
 ?>
 <!DOCTYPE html>
@@ -37,7 +45,6 @@
 					<div class="col-md-offset-3 col-md-6">
 						<div class="section-header">
                         <h2 class="section-heading animated" data-animation="bounceInUp">Hi <?php echo $_SESSION['name'];?> </h2>
-							<!--<p>Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet consectetur, adipisci velit, sed quia non numquam.</p>-->
 						</div>
 					</div>
 				</div>
@@ -75,24 +82,24 @@
 								<select name="ITlanguage">
 								<option value="C">C</option>
 								<option value="C++">C++</option>
-								<option value="C#">C#</option>
-								<option value="JAVA">JAVA</option>
-								<option value="PHP">PHP</option>
-								<option value="Python">Python</option>
-								<option value="Ruby">Ruby</option>
-								<option value="OC">Objective-C</option>
-								<option value="VB">VisualBasic</option>
+								<!--<option value="C#">C#</option>-->
+								<!--<option value="Java">Java</option>-->
+								<!--<option value="PHP">PHP</option>-->
+								<!--<option value="Python">Python</option>-->
+								<!--<option value="Ruby">Ruby</option>-->
+								<!--<option value="OC">Objective-C</option>-->
+								<!--<option value="VB">VisualBasic</option>-->
 								</select>
 
 							</div>
 									<div style="float: left;margin: 0px 10px;">
-										<button type="submit" class="btn btn-theme pull-left">确认</button>
+										<a href="<?php echo $_SERVER['PHP_SELF']?>/?logout=1"><button type="button" class="btn btn-theme pull-left")>logout</button></a>
 									</div>
 									<div style="float: left;margin: 0px 10px;">
 										<button type="reset" class="btn btn-theme pull-left">reset</button>
 									</div>
 									<div style="float: left;margin: 0px 10px;">
-										<button type="submit" class="btn btn-theme pull-left">提交</button>
+										<button type="submit" class="btn btn-theme pull-left">submit</button>
 									</div>
 									<br>
 									</form>
@@ -137,7 +144,9 @@
             //echo "Starting Client\n";
 
             //$msgFromServer = socket_read($resSocket, 2345);
-            $msgToServer = "$userfilename#$choose#20151111#whatthefuckismd5sum";
+            $timestamp = time();
+            $sectok = md5($timestamp.$salt);
+            $msgToServer = "$userfilename#$choose#$timestamp#$sectok";
             //echo "Sending compiling request to server ...\n";
             socket_write($resSocket, $msgToServer, strlen($msgToServer) + 1);
             $msgFromServer = socket_read($resSocket,5);         //Listening for signal
@@ -183,8 +192,11 @@
                                 <textarea class="form-control" name="output" rows="5" data-rule="required" data-msg="Here's your output">
 
 <?php
+    if(isset($_SESSION['output']))
+    {
         echo $_SESSION['output'];
         unset($_SESSION['output']);
+    }
 ?>
 </textarea>
                                 <div class="validation"></div>

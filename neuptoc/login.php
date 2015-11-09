@@ -107,16 +107,11 @@
 <?php
     function check_login()
     {
-      echo $_SESSION['name'];
         if(isset($_SESSION['name']))
         {
-            header("Location:submit.php");
+            var_dump($_SESSION);
+            //header("Location:submit.php");
         }
-        else
-        {
-
-        }
-        return ;
     }
     if($_SERVER['REQUEST_METHOD']!='POST')
     {
